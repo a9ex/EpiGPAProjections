@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "Epitech G.P.A projections",
+    "version": "1.0.0",
+    "description": "Simulate your G.P.A",
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "cookies",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://intra.epitech.eu/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://intra.epitech.eu/*"
+            ],
+            "js": [
+                "inject.js"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "background/service_worker.js"
+    }
+}
