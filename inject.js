@@ -1,6 +1,8 @@
-console.log("Extension loaded!")
+let gradesData = {};
 
-console.log("Injecting script...")
+function consoleLog(text) {
+    console.log(`%c [Epitech GPA Extension] ${text}`, "color: cyan");
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -35,7 +37,7 @@ async function injectTableColumn() {
     const tableRows = table.querySelectorAll("tr");
 
     if (tableRows[0].children[3].textContent.trim() === "Projection Grade") {
-        console.log("Intranet is so bad that it already has the column... skipping...")
+        consoleLog("Intranet is so bad that it already has the column... skipping...")
         return;
     }
 
@@ -57,15 +59,13 @@ async function injectTableData() {
     const table = document.querySelector("#user-module > div.overflow > div > table");
     const tableRows = table.querySelectorAll("tr");
 
-    for (let i = 1; i < tableRows.length; i++) {
+    for (let i = 2; i < tableRows.length; i++) {
         const row = tableRows[i];
-        const studentId = row.children[0].textContent.trim();
-        const grade = row.children[3].textContent.trim();
 
         const newColumn = document.createElement("td");
         newColumn.className = "grade projection";
         newColumn.setAttribute("tabindex", "0");
-        newColumn.innerHTML = `-`;
+        newColumn.innerHTML = `<select class="select" credit="${row.children[3].textContent.trim()}" module="${row.children[5].textContent.trim()}"> <option value="-">-</option> <option value="Acquis">Acquis</option> <option value="A">A</option> <option value="B">B</option> <option value="C">C</option> <option value="D">D</option> <option value="Echec">Echec</option> </select>`;
         row.insertBefore(newColumn, row.children[3]);
     }
 }
@@ -144,6 +144,7 @@ async function getStudentGrades() {
     });
 
     const data = await response.json();
+    gradesData = data;
     return data;
 }
 
@@ -151,7 +152,7 @@ window.navigation.addEventListener("navigate", (event) => {
     const uri = event.destination.url;
 
     if (uri.includes("/user/#!/notes")) {
-        console.log("Injecting table column and data...");
+        consoleLog("Injecting table column and data...");
         injectTableColumn();
         injectTableData();
     }
@@ -159,12 +160,21 @@ window.navigation.addEventListener("navigate", (event) => {
 
 (() => {
     if (window.location.href.includes("/user/#!/notes")) {
-        console.log("Injecting table column and data...");
+        consoleLog("Injecting table column and data...");
         injectTableColumn();
         injectTableData();
     }
+
     if (window.location.href.includes("/user")) {
-        console.log("Injecting GPA...");
+        consoleLog("Injecting GPA Projection script...")
+
+        consoleLog("Preventing intranet from adding event listeners that fucks up the extension...");
+
+        document.addEventListener("mouseup", event => event.stopPropagation(), true);
+        document.addEventListener("mousedown", event => event.stopPropagation(), true);
+        document.addEventListener("mousemove", event => event.stopPropagation(), true);
+
+        consoleLog("Injecting GPA module...");
         injectGPA();
         getStudentGrades();
     }
