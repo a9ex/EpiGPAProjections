@@ -43,7 +43,7 @@ async function injectTableColumn() {
 
     const newColumnHeader = document.createElement("th");
     newColumnHeader.style.width = "75px";
-    newColumnHeader.innerHTML = '<div><div><span class="resizer"></span><span class="updown"></span><label>Projection Grade</label></div></div>';
+    newColumnHeader.innerHTML = '<div><div><span class="resizer"></span><span class="updown"></span><label style="color: green;">Projection Grade</label></div></div>';
     tableRows[0].insertBefore(newColumnHeader, tableRows[0].children[3]);
 
     const tableWhat = document.querySelector("#user-module > div.overflow > div > table");
@@ -65,9 +65,49 @@ async function injectTableData() {
         const newColumn = document.createElement("td");
         newColumn.className = "grade projection";
         newColumn.setAttribute("tabindex", "0");
-        newColumn.innerHTML = `<select class="select" credit="${row.children[3].textContent.trim()}" module="${row.children[5].textContent.trim()}"> <option value="-">-</option> <option value="Acquis">Acquis</option> <option value="A">A</option> <option value="B">B</option> <option value="C">C</option> <option value="D">D</option> <option value="Echec">Echec</option> </select>`;
+        newColumn.innerHTML = `<select class="select" credit="${row.children[3].textContent.trim()}" module="${row.children[5].textContent.trim()}"> <option value="-">-</option> <option value="Acquis">Acquis</option> ${row.children[5].textContent.trim() !== "G-EPI-030" ? ` <option value="A">A</option> <option value="B">B</option> <option value="C">C</option> <option value="D">D</option> <option value="Echec">Echec</option>` : ""} </select>`;
         row.insertBefore(newColumn, row.children[3]);
+
+        const currentGrade = gradesData.modules.find(grade => grade.codemodule === row.children[6].textContent.trim() && grade.scolaryear == row.children[5].textContent.trim()).grade;
+        const select = newColumn.querySelector("select");
+        const options = select.querySelectorAll("option");
+        let found = false;
+
+        for (let j = 0; j < options.length; j++) {
+            if (options[j].value === currentGrade) {
+                options[j].setAttribute("selected", "selected");
+                found = true;
+            }
+        }
+        if (!found) {
+            options[5].setAttribute("selected", "selected");
+            consoleLog("Could not find grade in select options");
+        }
+
+        select.addEventListener("change", onChangeGPA);
     }
+}
+
+function onChangeGPA() {
+    const table = document.querySelector("#user-module > div.overflow > div > table");
+    const tableRows = table.querySelectorAll("tr");
+
+    for (let i = 2; i < tableRows.length; i++) {
+        const row = tableRows[i];
+        const select = row.children[3].querySelector("select");
+        const newGrade = select.options[select.selectedIndex].value;
+        const module = select.getAttribute("module");
+
+        gradesData.modules = gradesData.modules.map(grade => {
+            if (grade.codemodule === module) {
+                grade.grade = newGrade;
+            }
+            return grade;
+        });
+    }
+
+    const computedGPA = computeGPA(gradesData);
+    editGPA(computedGPA);
 }
 
 async function injectGPA(gpa = "-") {
@@ -93,7 +133,7 @@ function editGPA(gpa) {
     const gpaValue = document.querySelector("#profil > div.bloc.top > div.rzone > span > span:nth-child(6)");
 
     if (!gpaValue) {
-        console.error("No custom GPA value found");
+        consoleLog("No custom GPA value found");
         return;
     }
 
@@ -133,7 +173,7 @@ async function getStudentGrades() {
     const login = getIntranetLogin();
 
     if (!cookie || !login) {
-        console.error("No cookie or login found");
+        consoleLog("No cookie or login found");
         return;
     }
 
@@ -172,7 +212,7 @@ window.navigation.addEventListener("navigate", (event) => {
 
         document.addEventListener("mouseup", event => event.stopPropagation(), true);
         document.addEventListener("mousedown", event => event.stopPropagation(), true);
-        document.addEventListener("mousemove", event => event.stopPropagation(), true);
+        // document.addEventListener("mousemove", event => event.stopPropagation(), true);
 
         consoleLog("Injecting GPA module...");
         injectGPA();
