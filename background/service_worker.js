@@ -1,5 +1,5 @@
 function getIntranetCookie(sendResponse) {
-    chrome.cookies.getAll({}, function (cookies) {
+    browser.cookies.getAll({}, function (cookies) {
         const cookie = cookies.find(cookie => cookie.name === 'user');
         if (cookie) {
             sendResponse({ cookie: cookie.value });
@@ -10,7 +10,7 @@ function getIntranetCookie(sendResponse) {
 }
 
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.command === "getIntranetCookie") {
         getIntranetCookie(sendResponse);
         return true;
