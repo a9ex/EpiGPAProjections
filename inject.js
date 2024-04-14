@@ -290,6 +290,7 @@ window.navigation.addEventListener("navigate", (event) => {
     }
 
     if (window.location.href.includes("/user")) {
+        consoleLog(`- v${chrome.runtime.getManifest().version}`);
         consoleLog("Injecting GPA Projection script...")
 
         consoleLog("Preventing intranet from adding event listeners that fucks up the extension...");
