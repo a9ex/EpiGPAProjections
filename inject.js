@@ -86,6 +86,8 @@ async function injectTableData() {
         select.classList.add('select');
         select.setAttribute('credit', row.children[3].textContent.trim());
         select.setAttribute('module', row.children[5].textContent.trim());
+        select.setAttribute('instance', row.children[0].children[0].getAttribute("href").split("/")[4]);
+        select.setAttribute('year', row.children[4].textContent.trim());
 
         const optionDefault = document.createElement('option');
         optionDefault.value = '-';
@@ -178,11 +180,9 @@ async function injectGPA(gpa = "-") {
     const noteZone = document.querySelector("#profil > div.bloc.top > div.rzone > span");
 
     const gpaLabel = document.createElement("label");
-    const label = document.createElement('label');
-    label.textContent = "G.P.A. Projection";
-
-    gpaLabel.appendChild(label);
+    gpaLabel.textContent = "G.P.A. Projection";
     gpaLabel.style.color = "green";
+
     noteZone.appendChild(gpaLabel);
 
     const gpaValue = document.createElement("span");
@@ -289,6 +289,7 @@ addEventListener("hashchange", (event) => {
     }
 
     if (window.location.href.includes("/user")) {
+        consoleLog(`- v${browser.runtime.getManifest().version}`);
         consoleLog("Injecting GPA Projection script...")
 
         consoleLog("Preventing intranet from adding event listeners that fucks up the extension...");
