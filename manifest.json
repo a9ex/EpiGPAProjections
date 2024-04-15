@@ -1,7 +1,7 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "Epitech G.P.A Projections",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Project your G.P.A on your past and next modules to see how many G.P.A you could have obtained (if you hadn't choke your module)!",
     "icons": {
         "16": "icons/icon16.png",
@@ -9,10 +9,8 @@
         "128": "icons/icon128.png"
     },
     "permissions": [
+        "*://intra.epitech.eu/*",
         "cookies"
-    ],
-    "host_permissions": [
-        "*://intra.epitech.eu/*"
     ],
     "content_scripts": [
         {
@@ -25,9 +23,20 @@
         }
     ],
     "background": {
-        "service_worker": "background/service_worker.js",
         "scripts": [
             "background/service_worker.js"
+        ]
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "externally_connectable": {
+        "matches": [
+            "*://intra.epitech.eu/*"
         ]
     },
     "browser_specific_settings": {
