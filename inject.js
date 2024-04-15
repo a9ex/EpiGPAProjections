@@ -180,11 +180,9 @@ async function injectGPA(gpa = "-") {
     const noteZone = document.querySelector("#profil > div.bloc.top > div.rzone > span");
 
     const gpaLabel = document.createElement("label");
-    const label = document.createElement('label');
-    label.textContent = "G.P.A. Projection";
-
-    gpaLabel.appendChild(label);
+    gpaLabel.textContent = "G.P.A. Projection";
     gpaLabel.style.color = "green";
+
     noteZone.appendChild(gpaLabel);
 
     const gpaValue = document.createElement("span");
