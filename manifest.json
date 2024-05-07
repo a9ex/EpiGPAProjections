@@ -36,7 +36,8 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "{e33dfeb5-43e9-4289-a029-d42507595064}"
+            "id": "{e33dfeb5-43e9-4289-a029-d42507595064}",
+            "update_url": "https://raw.githubusercontent.com/a9ex/EpiGPAProjections/firefox/latest/updates.json"
         }
     }
 }
