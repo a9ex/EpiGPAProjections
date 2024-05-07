@@ -1,0 +1,12 @@
+{
+    "addons": {
+        "{e33dfeb5-43e9-4289-a029-d42507595064}": {
+            "updates": [
+                {
+                    "version": "1.0.4.1",
+                    "update_link": "https://github.com/a9ex/EpiGPAProjections/releases/download/v1.0.4-firefox/epitech_gpa_projections-1.0.4.1.xpi"
+                }
+            ]
+        }
+    }
+}
