@@ -128,6 +128,9 @@ async function injectTableData() {
 
         newColumn.appendChild(select);
 
+        select.addEventListener("mouseup", event => event.stopPropagation(), true);
+        select.addEventListener("mousedown", event => event.stopPropagation(), true);
+
         row.insertBefore(newColumn, row.children[3]);
 
         // We need to compare the year AND the instance because the same module can be taken multiple times (e.g. JAM / English)
@@ -292,13 +295,6 @@ addEventListener("hashchange", (event) => {
         consoleLog(`- v${browser.runtime.getManifest().version}`);
         consoleLog("Injecting GPA Projection script...")
 
-        consoleLog("Preventing intranet from adding event listeners that fucks up the extension...");
-
-        addEventListener("mouseup", event => event.stopPropagation(), true);
-        addEventListener("mousedown", event => event.stopPropagation(), true);
-        // document.addEventListener("mousemove", event => event.stopPropagation(), true);
-
-        consoleLog("Injecting GPA module...");
         injectGPA();
         getStudentGrades();
     }
