@@ -151,11 +151,11 @@ async function injectTableData() {
             consoleLog("Could not find grade in select options");
         }
 
-        selectSelector.addEventListener("change", onChangeGPA);
+        selectSelector.addEventListener("change", onChange);
     }
 }
 
-function onChangeGPA() {
+async function onChange() {
     const table = document.querySelector("#user-module > div.overflow > div > table");
     const tableRows = table.querySelectorAll("tr");
 
@@ -176,38 +176,42 @@ function onChangeGPA() {
     }
 
     const computedGPA = computeGPA(gradesData);
-    editGPA(computedGPA);
+    const computedCredits = computeCredits(gradesData);
+
+    editData(computedGPA, computedCredits);
 }
 
-async function injectGPA(gpa = "-") {
+async function injectData(gpa = "-", credits = 0) {
     const noteZone = document.querySelector("#profil > div.bloc.top > div.rzone > span");
 
-    const gpaLabel = document.createElement("label");
-    gpaLabel.textContent = "G.P.A. Projection";
-    gpaLabel.style.color = "green";
+    const dataLabel = document.createElement("label");
+    dataLabel.textContent = "G.P.A. Projection";
+    dataLabel.style.color = "green";
 
-    noteZone.appendChild(gpaLabel);
+    noteZone.appendChild(dataLabel);
 
-    const gpaValue = document.createElement("span");
-    gpaValue.className = "value";
-    gpaValue.style.color = "green";
+    const dataValue = document.createElement("span");
 
-    const textNode = document.createTextNode(gpa);
+    dataValue.className = "value";
+    dataValue.style.color = "green";
 
-    while (gpaValue.firstChild) {
-        gpaValue.removeChild(gpaValue.firstChild);
+    const textNode = document.createTextNode(`${gpa} (${credits} credits)`);
+
+    while (dataValue.firstChild) {
+        dataValue.removeChild(dataValue.firstChild);
     }
 
-    gpaValue.appendChild(textNode);
-
-    noteZone.appendChild(gpaValue);
+    dataValue.appendChild(textNode);
+    noteZone.appendChild(dataValue);
 
     const studentGrades = await getStudentGrades();
     const computedGPA = computeGPA(studentGrades);
-    editGPA(computedGPA);
+    const computedCredits = computeCredits(studentGrades);
+
+    editData(computedGPA, computedCredits);
 }
 
-function editGPA(gpa) {
+function editData(gpa, credits) {
     const gpaValue = document.querySelector("#profil > div.bloc.top > div.rzone > span > span:nth-child(6)");
 
     if (!gpaValue) {
@@ -215,14 +219,13 @@ function editGPA(gpa) {
         return;
     }
 
-    const textNode = document.createTextNode(gpa);
+    const textNode = document.createTextNode(`${gpa} (${credits} credits)`);
 
     while (gpaValue.firstChild) {
         gpaValue.removeChild(gpaValue.firstChild);
     }
 
     gpaValue.appendChild(textNode);
-
 }
 
 function computeGPA(grades) {
@@ -273,6 +276,14 @@ async function getStudentGrades() {
     return data;
 }
 
+function computeCredits(grades) {
+    const gradesToBypass = ["-", "Echec"];
+
+    return grades.modules.reduce((acc, grade) => {
+        return acc + parseFloat(gradesToBypass.includes(grade.grade) ? 0 : grade.credits);
+    }, 0);
+}
+
 window.navigation.addEventListener("navigate", (event) => {
     const uri = event.destination.url;
 
@@ -294,7 +305,7 @@ window.navigation.addEventListener("navigate", (event) => {
         consoleLog(`- v${chrome.runtime.getManifest().version}`);
         consoleLog("Injecting GPA Projection script...")
 
-        injectGPA();
-        getStudentGrades();
+        injectData();
+        // getStudentGrades();
     }
 })();
