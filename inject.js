@@ -279,8 +279,10 @@ async function getStudentGrades() {
 function computeCredits(grades) {
     const gradesToBypass = ["-", "Echec"];
 
+    // Retrieve and reduce all the credits obtained since first year
+    // The Final jury credits already removes the supplements all by itself
     return grades.modules.reduce((acc, grade) => {
-        return acc + parseFloat(gradesToBypass.includes(grade.grade) ? 0 : grade.credits);
+        return acc + parseInt(gradesToBypass.includes(grade.grade) ? 0 : grade.credits);
     }, 0);
 }
 
@@ -304,8 +306,6 @@ window.navigation.addEventListener("navigate", (event) => {
     if (window.location.href.includes("/user")) {
         consoleLog(`- v${chrome.runtime.getManifest().version}`);
         consoleLog("Injecting GPA Projection script...")
-
         injectData();
-        // getStudentGrades();
     }
 })();
