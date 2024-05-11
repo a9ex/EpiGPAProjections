@@ -155,7 +155,7 @@ async function injectTableData() {
     }
 }
 
-async function onChange() {
+function onChange() {
     const table = document.querySelector("#user-module > div.overflow > div > table");
     const tableRows = table.querySelectorAll("tr");
 
